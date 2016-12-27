@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+service SegSvc {
+	rpc Get(User) returns (GetResponse) {}
+}
+
+message User {
+  string UserID = 1;
+  string URI = 2;
+  ScoreData Scores = 3;
+}
+
+message GetResponse {
+  string segment = 1;
+  string value = 2;
+}
+
+message ScoreData {
+  map<string, int64> segment = 1;
+  GeoData geo = 2;
+  Reward rewardLevel = 3;
+  string CRM = 4;
+}
+
+message GeoData {
+  string ipAddress = 1;
+  string zipCode = 2;
+  string DMZ = 3;
+}
+
+enum Reward {
+  ERR = 0;
+  ZERO = 1;
+  ONE = 2;
+  TWO = 3;
+  THREE = 4;
+  FOUR = 5;
+  FIVE = 6;
+}
