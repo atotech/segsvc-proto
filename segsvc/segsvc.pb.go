@@ -9,8 +9,8 @@
 		segsvc.proto
 
 	It has these top-level messages:
-		User
 		GetResponse
+		User
 		ScoreData
 		GeoData
 */
@@ -79,15 +79,25 @@ var Reward_value = map[string]int32{
 
 func (Reward) EnumDescriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{0} }
 
+type GetResponse struct {
+	Segment string `protobuf:"bytes,1,opt,name=segment,proto3" json:"segment,omitempty"`
+	Value   string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (m *GetResponse) Reset()                    { *m = GetResponse{} }
+func (*GetResponse) ProtoMessage()               {}
+func (*GetResponse) Descriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{0} }
+
 type User struct {
-	UserID string     `protobuf:"bytes,1,opt,name=UserID,proto3" json:"UserID,omitempty"`
-	URI    string     `protobuf:"bytes,2,opt,name=URI,proto3" json:"URI,omitempty"`
-	Scores *ScoreData `protobuf:"bytes,3,opt,name=Scores" json:"Scores,omitempty"`
+	UserID   string       `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	Uri      string       `protobuf:"bytes,2,opt,name=uri,proto3" json:"uri,omitempty"`
+	Scores   *ScoreData   `protobuf:"bytes,3,opt,name=scores" json:"scores,omitempty"`
+	Override *GetResponse `protobuf:"bytes,4,opt,name=override" json:"override,omitempty"`
 }
 
 func (m *User) Reset()                    { *m = User{} }
 func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{0} }
+func (*User) Descriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{1} }
 
 func (m *User) GetScores() *ScoreData {
 	if m != nil {
@@ -96,20 +106,18 @@ func (m *User) GetScores() *ScoreData {
 	return nil
 }
 
-type GetResponse struct {
-	Segment string `protobuf:"bytes,1,opt,name=segment,proto3" json:"segment,omitempty"`
-	Value   string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+func (m *User) GetOverride() *GetResponse {
+	if m != nil {
+		return m.Override
+	}
+	return nil
 }
-
-func (m *GetResponse) Reset()                    { *m = GetResponse{} }
-func (*GetResponse) ProtoMessage()               {}
-func (*GetResponse) Descriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{1} }
 
 type ScoreData struct {
 	Segment     map[string]int64 `protobuf:"bytes,1,rep,name=segment" json:"segment,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	Geo         *GeoData         `protobuf:"bytes,2,opt,name=geo" json:"geo,omitempty"`
 	RewardLevel Reward           `protobuf:"varint,3,opt,name=rewardLevel,proto3,enum=Reward" json:"rewardLevel,omitempty"`
-	CRM         string           `protobuf:"bytes,4,opt,name=CRM,proto3" json:"CRM,omitempty"`
+	Crm         string           `protobuf:"bytes,4,opt,name=crm,proto3" json:"crm,omitempty"`
 }
 
 func (m *ScoreData) Reset()                    { *m = ScoreData{} }
@@ -133,7 +141,7 @@ func (m *ScoreData) GetGeo() *GeoData {
 type GeoData struct {
 	IpAddress string `protobuf:"bytes,1,opt,name=ipAddress,proto3" json:"ipAddress,omitempty"`
 	ZipCode   string `protobuf:"bytes,2,opt,name=zipCode,proto3" json:"zipCode,omitempty"`
-	DMZ       string `protobuf:"bytes,3,opt,name=DMZ,proto3" json:"DMZ,omitempty"`
+	Dmz       string `protobuf:"bytes,3,opt,name=dmz,proto3" json:"dmz,omitempty"`
 }
 
 func (m *GeoData) Reset()                    { *m = GeoData{} }
@@ -141,8 +149,8 @@ func (*GeoData) ProtoMessage()               {}
 func (*GeoData) Descriptor() ([]byte, []int) { return fileDescriptorSegsvc, []int{3} }
 
 func init() {
-	proto.RegisterType((*User)(nil), "User")
 	proto.RegisterType((*GetResponse)(nil), "GetResponse")
+	proto.RegisterType((*User)(nil), "User")
 	proto.RegisterType((*ScoreData)(nil), "ScoreData")
 	proto.RegisterType((*GeoData)(nil), "GeoData")
 	proto.RegisterEnum("Reward", Reward_name, Reward_value)
@@ -153,42 +161,6 @@ func (x Reward) String() string {
 		return s
 	}
 	return strconv.Itoa(int(x))
-}
-func (this *User) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*User)
-	if !ok {
-		that2, ok := that.(User)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.UserID != that1.UserID {
-		return false
-	}
-	if this.URI != that1.URI {
-		return false
-	}
-	if !this.Scores.Equal(that1.Scores) {
-		return false
-	}
-	return true
 }
 func (this *GetResponse) Equal(that interface{}) bool {
 	if that == nil {
@@ -219,6 +191,45 @@ func (this *GetResponse) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Value != that1.Value {
+		return false
+	}
+	return true
+}
+func (this *User) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*User)
+	if !ok {
+		that2, ok := that.(User)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.UserID != that1.UserID {
+		return false
+	}
+	if this.Uri != that1.Uri {
+		return false
+	}
+	if !this.Scores.Equal(that1.Scores) {
+		return false
+	}
+	if !this.Override.Equal(that1.Override) {
 		return false
 	}
 	return true
@@ -262,7 +273,7 @@ func (this *ScoreData) Equal(that interface{}) bool {
 	if this.RewardLevel != that1.RewardLevel {
 		return false
 	}
-	if this.CRM != that1.CRM {
+	if this.Crm != that1.Crm {
 		return false
 	}
 	return true
@@ -298,24 +309,10 @@ func (this *GeoData) Equal(that interface{}) bool {
 	if this.ZipCode != that1.ZipCode {
 		return false
 	}
-	if this.DMZ != that1.DMZ {
+	if this.Dmz != that1.Dmz {
 		return false
 	}
 	return true
-}
-func (this *User) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&segsvc.User{")
-	s = append(s, "UserID: "+fmt.Sprintf("%#v", this.UserID)+",\n")
-	s = append(s, "URI: "+fmt.Sprintf("%#v", this.URI)+",\n")
-	if this.Scores != nil {
-		s = append(s, "Scores: "+fmt.Sprintf("%#v", this.Scores)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
 }
 func (this *GetResponse) GoString() string {
 	if this == nil {
@@ -325,6 +322,23 @@ func (this *GetResponse) GoString() string {
 	s = append(s, "&segsvc.GetResponse{")
 	s = append(s, "Segment: "+fmt.Sprintf("%#v", this.Segment)+",\n")
 	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *User) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&segsvc.User{")
+	s = append(s, "UserID: "+fmt.Sprintf("%#v", this.UserID)+",\n")
+	s = append(s, "Uri: "+fmt.Sprintf("%#v", this.Uri)+",\n")
+	if this.Scores != nil {
+		s = append(s, "Scores: "+fmt.Sprintf("%#v", this.Scores)+",\n")
+	}
+	if this.Override != nil {
+		s = append(s, "Override: "+fmt.Sprintf("%#v", this.Override)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -351,7 +365,7 @@ func (this *ScoreData) GoString() string {
 		s = append(s, "Geo: "+fmt.Sprintf("%#v", this.Geo)+",\n")
 	}
 	s = append(s, "RewardLevel: "+fmt.Sprintf("%#v", this.RewardLevel)+",\n")
-	s = append(s, "CRM: "+fmt.Sprintf("%#v", this.CRM)+",\n")
+	s = append(s, "Crm: "+fmt.Sprintf("%#v", this.Crm)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -363,7 +377,7 @@ func (this *GeoData) GoString() string {
 	s = append(s, "&segsvc.GeoData{")
 	s = append(s, "IpAddress: "+fmt.Sprintf("%#v", this.IpAddress)+",\n")
 	s = append(s, "ZipCode: "+fmt.Sprintf("%#v", this.ZipCode)+",\n")
-	s = append(s, "DMZ: "+fmt.Sprintf("%#v", this.DMZ)+",\n")
+	s = append(s, "Dmz: "+fmt.Sprintf("%#v", this.Dmz)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -466,46 +480,6 @@ var _SegSvc_serviceDesc = grpc.ServiceDesc{
 	Metadata: "segsvc.proto",
 }
 
-func (m *User) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *User) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.UserID) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.UserID)))
-		i += copy(dAtA[i:], m.UserID)
-	}
-	if len(m.URI) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.URI)))
-		i += copy(dAtA[i:], m.URI)
-	}
-	if m.Scores != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintSegsvc(dAtA, i, uint64(m.Scores.Size()))
-		n1, err := m.Scores.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	return i, nil
-}
-
 func (m *GetResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -532,6 +506,56 @@ func (m *GetResponse) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.Value)))
 		i += copy(dAtA[i:], m.Value)
+	}
+	return i, nil
+}
+
+func (m *User) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *User) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.UserID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.UserID)))
+		i += copy(dAtA[i:], m.UserID)
+	}
+	if len(m.Uri) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.Uri)))
+		i += copy(dAtA[i:], m.Uri)
+	}
+	if m.Scores != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintSegsvc(dAtA, i, uint64(m.Scores.Size()))
+		n1, err := m.Scores.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if m.Override != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintSegsvc(dAtA, i, uint64(m.Override.Size()))
+		n2, err := m.Override.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
 	}
 	return i, nil
 }
@@ -571,22 +595,22 @@ func (m *ScoreData) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintSegsvc(dAtA, i, uint64(m.Geo.Size()))
-		n2, err := m.Geo.MarshalTo(dAtA[i:])
+		n3, err := m.Geo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n3
 	}
 	if m.RewardLevel != 0 {
 		dAtA[i] = 0x18
 		i++
 		i = encodeVarintSegsvc(dAtA, i, uint64(m.RewardLevel))
 	}
-	if len(m.CRM) > 0 {
+	if len(m.Crm) > 0 {
 		dAtA[i] = 0x22
 		i++
-		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.CRM)))
-		i += copy(dAtA[i:], m.CRM)
+		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.Crm)))
+		i += copy(dAtA[i:], m.Crm)
 	}
 	return i, nil
 }
@@ -618,11 +642,11 @@ func (m *GeoData) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.ZipCode)))
 		i += copy(dAtA[i:], m.ZipCode)
 	}
-	if len(m.DMZ) > 0 {
+	if len(m.Dmz) > 0 {
 		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.DMZ)))
-		i += copy(dAtA[i:], m.DMZ)
+		i = encodeVarintSegsvc(dAtA, i, uint64(len(m.Dmz)))
+		i += copy(dAtA[i:], m.Dmz)
 	}
 	return i, nil
 }
@@ -654,24 +678,6 @@ func encodeVarintSegsvc(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
-func (m *User) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.UserID)
-	if l > 0 {
-		n += 1 + l + sovSegsvc(uint64(l))
-	}
-	l = len(m.URI)
-	if l > 0 {
-		n += 1 + l + sovSegsvc(uint64(l))
-	}
-	if m.Scores != nil {
-		l = m.Scores.Size()
-		n += 1 + l + sovSegsvc(uint64(l))
-	}
-	return n
-}
-
 func (m *GetResponse) Size() (n int) {
 	var l int
 	_ = l
@@ -681,6 +687,28 @@ func (m *GetResponse) Size() (n int) {
 	}
 	l = len(m.Value)
 	if l > 0 {
+		n += 1 + l + sovSegsvc(uint64(l))
+	}
+	return n
+}
+
+func (m *User) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.UserID)
+	if l > 0 {
+		n += 1 + l + sovSegsvc(uint64(l))
+	}
+	l = len(m.Uri)
+	if l > 0 {
+		n += 1 + l + sovSegsvc(uint64(l))
+	}
+	if m.Scores != nil {
+		l = m.Scores.Size()
+		n += 1 + l + sovSegsvc(uint64(l))
+	}
+	if m.Override != nil {
+		l = m.Override.Size()
 		n += 1 + l + sovSegsvc(uint64(l))
 	}
 	return n
@@ -704,7 +732,7 @@ func (m *ScoreData) Size() (n int) {
 	if m.RewardLevel != 0 {
 		n += 1 + sovSegsvc(uint64(m.RewardLevel))
 	}
-	l = len(m.CRM)
+	l = len(m.Crm)
 	if l > 0 {
 		n += 1 + l + sovSegsvc(uint64(l))
 	}
@@ -722,7 +750,7 @@ func (m *GeoData) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovSegsvc(uint64(l))
 	}
-	l = len(m.DMZ)
+	l = len(m.Dmz)
 	if l > 0 {
 		n += 1 + l + sovSegsvc(uint64(l))
 	}
@@ -742,18 +770,6 @@ func sovSegsvc(x uint64) (n int) {
 func sozSegsvc(x uint64) (n int) {
 	return sovSegsvc(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (this *User) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&User{`,
-		`UserID:` + fmt.Sprintf("%v", this.UserID) + `,`,
-		`URI:` + fmt.Sprintf("%v", this.URI) + `,`,
-		`Scores:` + strings.Replace(fmt.Sprintf("%v", this.Scores), "ScoreData", "ScoreData", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
 func (this *GetResponse) String() string {
 	if this == nil {
 		return "nil"
@@ -761,6 +777,19 @@ func (this *GetResponse) String() string {
 	s := strings.Join([]string{`&GetResponse{`,
 		`Segment:` + fmt.Sprintf("%v", this.Segment) + `,`,
 		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *User) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&User{`,
+		`UserID:` + fmt.Sprintf("%v", this.UserID) + `,`,
+		`Uri:` + fmt.Sprintf("%v", this.Uri) + `,`,
+		`Scores:` + strings.Replace(fmt.Sprintf("%v", this.Scores), "ScoreData", "ScoreData", 1) + `,`,
+		`Override:` + strings.Replace(fmt.Sprintf("%v", this.Override), "GetResponse", "GetResponse", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -783,7 +812,7 @@ func (this *ScoreData) String() string {
 		`Segment:` + mapStringForSegment + `,`,
 		`Geo:` + strings.Replace(fmt.Sprintf("%v", this.Geo), "GeoData", "GeoData", 1) + `,`,
 		`RewardLevel:` + fmt.Sprintf("%v", this.RewardLevel) + `,`,
-		`CRM:` + fmt.Sprintf("%v", this.CRM) + `,`,
+		`Crm:` + fmt.Sprintf("%v", this.Crm) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -795,7 +824,7 @@ func (this *GeoData) String() string {
 	s := strings.Join([]string{`&GeoData{`,
 		`IpAddress:` + fmt.Sprintf("%v", this.IpAddress) + `,`,
 		`ZipCode:` + fmt.Sprintf("%v", this.ZipCode) + `,`,
-		`DMZ:` + fmt.Sprintf("%v", this.DMZ) + `,`,
+		`Dmz:` + fmt.Sprintf("%v", this.Dmz) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -807,147 +836,6 @@ func valueToStringSegsvc(v interface{}) string {
 	}
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
-}
-func (m *User) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowSegsvc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: User: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: User: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowSegsvc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthSegsvc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UserID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field URI", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowSegsvc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthSegsvc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.URI = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Scores", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowSegsvc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthSegsvc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Scores == nil {
-				m.Scores = &ScoreData{}
-			}
-			if err := m.Scores.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipSegsvc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthSegsvc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *GetResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1035,6 +923,180 @@ func (m *GetResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Value = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipSegsvc(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthSegsvc
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *User) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowSegsvc
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: User: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: User: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSegsvc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthSegsvc
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uri", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSegsvc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthSegsvc
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Uri = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Scores", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSegsvc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthSegsvc
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Scores == nil {
+				m.Scores = &ScoreData{}
+			}
+			if err := m.Scores.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Override", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSegsvc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthSegsvc
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Override == nil {
+				m.Override = &GetResponse{}
+			}
+			if err := m.Override.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1246,7 +1308,7 @@ func (m *ScoreData) Unmarshal(dAtA []byte) error {
 			}
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CRM", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Crm", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1271,7 +1333,7 @@ func (m *ScoreData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.CRM = string(dAtA[iNdEx:postIndex])
+			m.Crm = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1383,7 +1445,7 @@ func (m *GeoData) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DMZ", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Dmz", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1408,7 +1470,7 @@ func (m *GeoData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DMZ = string(dAtA[iNdEx:postIndex])
+			m.Dmz = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1539,33 +1601,34 @@ var (
 func init() { proto.RegisterFile("segsvc.proto", fileDescriptorSegsvc) }
 
 var fileDescriptorSegsvc = []byte{
-	// 438 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x52, 0x41, 0x8b, 0xd3, 0x40,
-	0x14, 0xce, 0x74, 0xda, 0x74, 0xf3, 0x52, 0x64, 0x18, 0x44, 0x43, 0x59, 0x86, 0x25, 0x07, 0xa9,
-	0x22, 0x01, 0xe3, 0x45, 0x16, 0x3c, 0x68, 0x1b, 0x6b, 0x61, 0x6b, 0x61, 0xd2, 0x2a, 0xec, 0xad,
-	0xb6, 0x8f, 0xb2, 0xb8, 0x36, 0x25, 0x13, 0x2b, 0xeb, 0xc9, 0x9f, 0xe0, 0xcf, 0xf0, 0xa7, 0x78,
-	0x5c, 0xf0, 0xe2, 0xd1, 0xc6, 0x8b, 0xc7, 0xfd, 0x09, 0x32, 0x93, 0xa9, 0xcd, 0x9e, 0xf2, 0x7d,
-	0xdf, 0x9b, 0x79, 0xef, 0xfb, 0x26, 0x0f, 0x3a, 0x0a, 0x57, 0x6a, 0xbb, 0x88, 0x36, 0x79, 0x56,
-	0x64, 0xe1, 0x14, 0x9a, 0x33, 0x85, 0x39, 0xbf, 0x07, 0xae, 0xfe, 0x8e, 0x06, 0x01, 0x39, 0x21,
-	0x3d, 0x4f, 0x5a, 0xc6, 0x19, 0xd0, 0x99, 0x1c, 0x05, 0x0d, 0x23, 0x6a, 0xc8, 0x43, 0x70, 0xd3,
-	0x45, 0x96, 0xa3, 0x0a, 0xe8, 0x09, 0xe9, 0xf9, 0x31, 0x44, 0x86, 0x0e, 0xe6, 0xc5, 0x5c, 0xda,
-	0x4a, 0xf8, 0x1c, 0xfc, 0x21, 0x16, 0x12, 0xd5, 0x26, 0x5b, 0x2b, 0xe4, 0x01, 0xb4, 0x15, 0xae,
-	0x3e, 0xe2, 0xba, 0xb0, 0xdd, 0xf7, 0x94, 0xdf, 0x85, 0xd6, 0x76, 0x7e, 0xf9, 0x09, 0xed, 0x80,
-	0x8a, 0x84, 0x3f, 0x09, 0x78, 0xff, 0x9b, 0xf2, 0x27, 0xf5, 0xdb, 0xb4, 0xe7, 0xc7, 0xf7, 0x0f,
-	0x13, 0xa3, 0xb4, 0xaa, 0x24, 0xeb, 0x22, 0xbf, 0x3a, 0xb4, 0xed, 0x02, 0x5d, 0x61, 0x66, 0x9a,
-	0xfa, 0xf1, 0x51, 0x34, 0xc4, 0xcc, 0xd8, 0xd3, 0x22, 0x7f, 0x08, 0x7e, 0x8e, 0x9f, 0xe7, 0xf9,
-	0xf2, 0x0c, 0xb7, 0x78, 0x69, 0x42, 0xdc, 0x89, 0xdb, 0x91, 0x34, 0x9a, 0xac, 0xd7, 0x74, 0xf8,
-	0xbe, 0x1c, 0x07, 0xcd, 0x2a, 0x7c, 0x5f, 0x8e, 0xbb, 0xa7, 0xd0, 0xa9, 0x4f, 0xd4, 0x27, 0x3e,
-	0xe0, 0x95, 0x4d, 0xa5, 0xe1, 0xed, 0x44, 0xd4, 0x26, 0x3a, 0x6d, 0x3c, 0x23, 0x61, 0x0a, 0x6d,
-	0x6b, 0x84, 0x1f, 0x83, 0x77, 0xb1, 0x79, 0xb1, 0x5c, 0xe6, 0xa8, 0x94, 0xbd, 0x7c, 0x10, 0xf4,
-	0x73, 0x7d, 0xb9, 0xd8, 0xf4, 0xb3, 0xe5, 0xfe, 0x59, 0xf6, 0x54, 0x8f, 0x1b, 0x8c, 0xcf, 0x8d,
-	0x67, 0x4f, 0x6a, 0xf8, 0xe8, 0x0c, 0xdc, 0xca, 0x39, 0x6f, 0x03, 0x4d, 0xa4, 0x64, 0x0e, 0x3f,
-	0x82, 0xe6, 0x79, 0x22, 0x27, 0x8c, 0x68, 0x69, 0xf2, 0x26, 0x61, 0x0d, 0x0d, 0xa6, 0xef, 0x26,
-	0x8c, 0x72, 0x0f, 0x5a, 0xd3, 0xd7, 0x32, 0x49, 0x58, 0x53, 0x1f, 0x7b, 0x35, 0x99, 0x49, 0xd6,
-	0x32, 0x68, 0xf4, 0x36, 0x61, 0x6e, 0xfc, 0x00, 0xdc, 0x14, 0x57, 0xe9, 0x76, 0xc1, 0x8f, 0x81,
-	0x0e, 0xb1, 0xe0, 0xad, 0x48, 0xef, 0x41, 0xb7, 0x13, 0xd5, 0x7e, 0x67, 0xe8, 0xbc, 0x7c, 0x7c,
-	0xbd, 0x13, 0xce, 0xaf, 0x9d, 0x70, 0x6e, 0x76, 0x82, 0x7c, 0x2d, 0x05, 0xf9, 0x5e, 0x0a, 0xf2,
-	0xa3, 0x14, 0xe4, 0xba, 0x14, 0xe4, 0x77, 0x29, 0xc8, 0xdf, 0x52, 0x38, 0x37, 0xa5, 0x20, 0xdf,
-	0xfe, 0x08, 0xe7, 0xbd, 0x6b, 0x56, 0xed, 0xe9, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb0, 0xff,
-	0x3d, 0xae, 0x7a, 0x02, 0x00, 0x00,
+	// 456 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x92, 0x41, 0x8b, 0xd3, 0x40,
+	0x14, 0xc7, 0x33, 0x4d, 0x9b, 0x36, 0x2f, 0x45, 0xc2, 0x20, 0x1a, 0xca, 0x32, 0x2c, 0x39, 0x48,
+	0x15, 0x09, 0x18, 0x2f, 0xb2, 0xe0, 0x41, 0xdd, 0x58, 0x17, 0x16, 0x0b, 0x93, 0x5d, 0x05, 0x6f,
+	0xb5, 0x79, 0x94, 0xe2, 0xb6, 0x53, 0x66, 0xd2, 0xc8, 0xee, 0x41, 0xfc, 0x08, 0x7e, 0x0c, 0x3f,
+	0x8a, 0xc7, 0x05, 0x2f, 0x1e, 0x6d, 0xbc, 0x78, 0xdc, 0x8f, 0xb0, 0xcc, 0x74, 0xba, 0x6d, 0x6f,
+	0xff, 0xf7, 0x7f, 0xef, 0xcd, 0xfc, 0xe6, 0xbd, 0x81, 0xae, 0xc2, 0x89, 0xaa, 0xc6, 0xc9, 0x42,
+	0x8a, 0x52, 0xc4, 0x2f, 0x21, 0x18, 0x60, 0xc9, 0x51, 0x2d, 0xc4, 0x5c, 0x21, 0x8d, 0xa0, 0xad,
+	0x70, 0x32, 0xc3, 0x79, 0x19, 0x91, 0x43, 0xd2, 0xf7, 0xf9, 0x26, 0xa4, 0xf7, 0xa1, 0x55, 0x8d,
+	0x2e, 0x96, 0x18, 0x35, 0x8c, 0xbf, 0x0e, 0xe2, 0x6f, 0xd0, 0x3c, 0x57, 0x28, 0xe9, 0x03, 0xf0,
+	0x96, 0x0a, 0xe5, 0xc9, 0xb1, 0x6d, 0xb3, 0x11, 0x0d, 0xc1, 0x5d, 0xca, 0xa9, 0xed, 0xd1, 0x92,
+	0xc6, 0xe0, 0xa9, 0xb1, 0x90, 0xa8, 0x22, 0xf7, 0x90, 0xf4, 0x83, 0x14, 0x92, 0x5c, 0x87, 0xc7,
+	0xa3, 0x72, 0xc4, 0x6d, 0x86, 0xf6, 0xa1, 0x23, 0x2a, 0x94, 0x72, 0x5a, 0x60, 0xd4, 0x34, 0x55,
+	0xdd, 0x64, 0x87, 0x92, 0xdf, 0x65, 0xe3, 0xdf, 0x04, 0xfc, 0xbb, 0x7e, 0xfa, 0x6c, 0x97, 0xde,
+	0xed, 0x07, 0xe9, 0xc3, 0xed, 0xe1, 0x49, 0xbe, 0xce, 0x64, 0xf3, 0x52, 0x5e, 0x6e, 0x9f, 0xd5,
+	0x03, 0x77, 0x82, 0xc2, 0x00, 0x06, 0x69, 0x27, 0x19, 0xa0, 0x30, 0x24, 0xda, 0xa4, 0x8f, 0x21,
+	0x90, 0xf8, 0x75, 0x24, 0x8b, 0x53, 0xac, 0xf0, 0xc2, 0xf0, 0xde, 0x4b, 0xdb, 0x09, 0x37, 0x1e,
+	0xdf, 0xcd, 0xe9, 0x77, 0x8e, 0xe5, 0xcc, 0xc0, 0xfa, 0x5c, 0xcb, 0xde, 0x11, 0x74, 0x77, 0x6f,
+	0xd4, 0x15, 0x5f, 0xf0, 0xd2, 0x8e, 0x47, 0xcb, 0xfd, 0x89, 0xba, 0x76, 0xa2, 0x47, 0x8d, 0x17,
+	0x24, 0xce, 0xa1, 0x6d, 0x41, 0xe8, 0x01, 0xf8, 0xd3, 0xc5, 0xab, 0xa2, 0x90, 0xa8, 0x94, 0x6d,
+	0xde, 0x1a, 0x7a, 0x5d, 0x57, 0xd3, 0xc5, 0x1b, 0x51, 0x6c, 0xd6, 0xb2, 0x09, 0xf5, 0x75, 0xc5,
+	0xec, 0xca, 0x30, 0xfb, 0x5c, 0xcb, 0x27, 0xa7, 0xe0, 0xad, 0xc9, 0x69, 0x1b, 0xdc, 0x8c, 0xf3,
+	0xd0, 0xa1, 0x1d, 0x68, 0x7e, 0xca, 0xf8, 0x30, 0x24, 0xda, 0x1a, 0xbe, 0xcf, 0xc2, 0x86, 0x16,
+	0x67, 0x1f, 0x87, 0xa1, 0x4b, 0x7d, 0x68, 0x9d, 0xbd, 0xe3, 0x59, 0x16, 0x36, 0x75, 0xd9, 0xdb,
+	0xe1, 0x39, 0x0f, 0x5b, 0x46, 0x9d, 0x7c, 0xc8, 0x42, 0x2f, 0x7d, 0x04, 0x5e, 0x8e, 0x93, 0xbc,
+	0x1a, 0xd3, 0x03, 0x70, 0x07, 0x58, 0xd2, 0x56, 0xa2, 0x3f, 0x42, 0x6f, 0x6f, 0x51, 0xb1, 0xf3,
+	0xfa, 0xe9, 0xf5, 0x8a, 0x39, 0x7f, 0x56, 0xcc, 0xb9, 0x59, 0x31, 0xf2, 0xbd, 0x66, 0xe4, 0x67,
+	0xcd, 0xc8, 0xaf, 0x9a, 0x91, 0xeb, 0x9a, 0x91, 0xbf, 0x35, 0x23, 0xff, 0x6b, 0xe6, 0xdc, 0xd4,
+	0x8c, 0xfc, 0xf8, 0xc7, 0x9c, 0xcf, 0x9e, 0xf9, 0x94, 0xcf, 0x6f, 0x03, 0x00, 0x00, 0xff, 0xff,
+	0x90, 0x9f, 0xe2, 0x0c, 0xa4, 0x02, 0x00, 0x00,
 }

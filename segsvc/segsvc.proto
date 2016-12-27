@@ -4,28 +4,29 @@ service SegSvc {
 	rpc Get(User) returns (GetResponse) {}
 }
 
-message User {
-  string UserID = 1;
-  string URI = 2;
-  ScoreData Scores = 3;
-}
-
 message GetResponse {
   string segment = 1;
   string value = 2;
+}
+
+message User {
+  string userID = 1;
+  string uri = 2;
+  ScoreData scores = 3;
+  GetResponse override = 4;
 }
 
 message ScoreData {
   map<string, int64> segment = 1;
   GeoData geo = 2;
   Reward rewardLevel = 3;
-  string CRM = 4;
+  string crm = 4;
 }
 
 message GeoData {
   string ipAddress = 1;
   string zipCode = 2;
-  string DMZ = 3;
+  string dmz = 3;
 }
 
 enum Reward {
