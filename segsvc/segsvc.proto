@@ -11,7 +11,7 @@ message GetResponse {
 
 message User {
   string userID = 1;
-  string uri = 2;
+  string URI = 2;
   ScoreData scores = 3;
   GetResponse override = 4;
 }
@@ -20,13 +20,13 @@ message ScoreData {
   map<string, int64> segment = 1;
   GeoData geo = 2;
   Reward rewardLevel = 3;
-  string crm = 4;
+  string CMR = 4;
 }
 
 message GeoData {
   string ipAddress = 1;
   string zipCode = 2;
-  string dmz = 3;
+  string DMZ = 3;
 }
 
 enum Reward {
