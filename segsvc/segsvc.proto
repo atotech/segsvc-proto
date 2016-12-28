@@ -1,7 +1,14 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
 service SegSvc {
-	rpc Get(User) returns (GetResponse) {}
+  rpc Get(User) returns (GetResponse) {
+    option (google.api.http) = {
+      post: "/v1/get",
+      body: "*",
+    };
+  }
 }
 
 message GetResponse {
