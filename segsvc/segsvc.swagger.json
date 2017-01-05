@@ -1,0 +1,131 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "segsvc.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/get": {
+      "post": {
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "tags": [
+          "SegSvc"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "GeoData": {
+      "type": "object",
+      "properties": {
+        "ipAddress": {
+          "type": "string",
+          "format": "string"
+        },
+        "zipCode": {
+          "type": "string",
+          "format": "string"
+        },
+        "DMZ": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "GetResponse": {
+      "type": "object",
+      "properties": {
+        "segment": {
+          "type": "string",
+          "format": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "Reward": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "ZERO",
+        "ONE",
+        "TWO",
+        "THREE",
+        "FOUR",
+        "FIVE"
+      ],
+      "default": "NONE"
+    },
+    "ScoreData": {
+      "type": "object",
+      "properties": {
+        "segment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "geo": {
+          "$ref": "#/definitions/GeoData"
+        },
+        "rewardLevel": {
+          "$ref": "#/definitions/Reward"
+        },
+        "CRM": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "string",
+          "format": "string"
+        },
+        "URI": {
+          "type": "string",
+          "format": "string"
+        },
+        "scores": {
+          "$ref": "#/definitions/ScoreData"
+        },
+        "override": {
+          "$ref": "#/definitions/GetResponse"
+        }
+      }
+    }
+  }
+}
