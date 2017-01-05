@@ -27,7 +27,7 @@ message ScoreData {
   map<string, int64> segment = 1;
   GeoData geo = 2;
   Reward rewardLevel = 3;
-  string CMR = 4;
+  string CRM = 4;
 }
 
 message GeoData {
@@ -37,7 +37,7 @@ message GeoData {
 }
 
 enum Reward {
-  ERR = 0;
+  NONE = 0;
   ZERO = 1;
   ONE = 2;
   TWO = 3;
