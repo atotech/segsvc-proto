@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package segstore;
+
+service SegStore {
+  rpc SegmentDefs(SegmentDefsRequest) returns (SegmentData) {}
+  rpc Experiments(ExperimentsRequest) returns (ExperimentsResponse) {}
+}
+
+message SegmentDefsRequest {}
+
+message SegmentData {
+  map<string, SegmentConfig> data = 1;
+}
+
+message SegmentConfig {
+  int64 order = 1;
+  int64 qualify = 2;
+}
+
+message ExperimentsRequest {
+  string labels = 1;
+  string URL = 2;
+}
+
+message ExperimentsResponse {
+  repeated ExperimentMetadata data = 1;
+}
+
+message ExperimentMetadata {
+  string baseName = 1;
+  ExperimentType experimentType = 2;
+  repeated string segments = 3;
+}
+
+enum ExperimentType {
+  NONE = 0;
+  SEGMENT = 1;
+  GEO = 2;
+  REWARD = 3;
+  CRM = 4;
+}
