@@ -1,0 +1,101 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "segstore.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "segstoreExperimentMetadata": {
+      "type": "object",
+      "properties": {
+        "baseName": {
+          "type": "string",
+          "format": "string"
+        },
+        "experimentType": {
+          "$ref": "#/definitions/segstoreExperimentType"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "segstoreExperimentType": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "SEGMENT",
+        "GEO",
+        "REWARD",
+        "CRM"
+      ],
+      "default": "NONE"
+    },
+    "segstoreExperimentsRequest": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "string",
+          "format": "string"
+        },
+        "URL": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "segstoreExperimentsResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/segstoreExperimentMetadata"
+          }
+        }
+      }
+    },
+    "segstoreSegmentConfig": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "string",
+          "format": "int64"
+        },
+        "qualify": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "segstoreSegmentData": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/segstoreSegmentConfig"
+          }
+        }
+      }
+    },
+    "segstoreSegmentDefsRequest": {
+      "type": "object"
+    }
+  }
+}
