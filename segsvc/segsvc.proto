@@ -20,7 +20,7 @@ message User {
   string userID = 1;
   string URI = 2;
   ScoreData scores = 3;
-  GetResponse override = 4;
+  string labels = 4;
 }
 
 message ScoreData {

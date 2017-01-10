@@ -122,8 +122,9 @@
         "scores": {
           "$ref": "#/definitions/ScoreData"
         },
-        "override": {
-          "$ref": "#/definitions/GetResponse"
+        "labels": {
+          "type": "string",
+          "format": "string"
         }
       }
     }
