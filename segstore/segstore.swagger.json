@@ -14,7 +14,60 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/experiments": {
+      "post": {
+        "operationId": "Experiments",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/segstoreExperimentsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/segstoreExperimentsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SegStore"
+        ]
+      }
+    },
+    "/v1/segment-defs": {
+      "post": {
+        "operationId": "SegmentDefs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/segstoreSegmentData"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/segstoreSegmentDefsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SegStore"
+        ]
+      }
+    }
+  },
   "definitions": {
     "segstoreExperimentMetadata": {
       "type": "object",

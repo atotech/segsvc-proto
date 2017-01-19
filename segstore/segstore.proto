@@ -1,10 +1,23 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
 package segstore;
 
 service SegStore {
-  rpc SegmentDefs(SegmentDefsRequest) returns (SegmentData) {}
-  rpc Experiments(ExperimentsRequest) returns (ExperimentsResponse) {}
+  rpc SegmentDefs(SegmentDefsRequest) returns (SegmentData) {
+    option (google.api.http) = {
+      post: "/v1/segment-defs",
+      body: "*",
+    };
+  }
+
+  rpc Experiments(ExperimentsRequest) returns (ExperimentsResponse) {
+    option (google.api.http) = {
+      post: "/v1/experiments",
+      body: "*",
+    };
+  }
 }
 
 message SegmentDefsRequest {}
