@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+service Bertram {
+  rpc Get(User) returns (Experiment) {
+    option (google.api.http) = {
+      post: "/v1/get",
+      body: "*",
+    };
+  }
+}
+
+message Experiment {
+  string name = 1;
+  string segment = 2;
+  string value = 3;
+}
+
+message User {
+  string userID = 1;
+  string URI = 2;
+  string labels = 3;
+  ScoreData scores = 4;
+}
+
+message ScoreData {
+  map<string, int64> segment = 1;
+}

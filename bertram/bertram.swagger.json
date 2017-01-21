@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "segsvc.proto",
+    "title": "bertram.proto",
     "version": "version not set"
   },
   "schemes": [
@@ -22,7 +22,7 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/GetResponse"
+              "$ref": "#/definitions/Experiment"
             }
           }
         },
@@ -37,7 +37,7 @@
           }
         ],
         "tags": [
-          "SegSvc"
+          "Bertram"
         ]
       }
     }
@@ -60,47 +60,6 @@
         }
       }
     },
-    "GeoData": {
-      "type": "object",
-      "properties": {
-        "ipAddress": {
-          "type": "string",
-          "format": "string"
-        },
-        "zipCode": {
-          "type": "string",
-          "format": "string"
-        },
-        "DMZ": {
-          "type": "string",
-          "format": "string"
-        }
-      }
-    },
-    "GetResponse": {
-      "type": "object",
-      "properties": {
-        "experiments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Experiment"
-          }
-        }
-      }
-    },
-    "Reward": {
-      "type": "string",
-      "enum": [
-        "NONE",
-        "ZERO",
-        "ONE",
-        "TWO",
-        "THREE",
-        "FOUR",
-        "FIVE"
-      ],
-      "default": "NONE"
-    },
     "ScoreData": {
       "type": "object",
       "properties": {
@@ -110,16 +69,6 @@
             "type": "string",
             "format": "int64"
           }
-        },
-        "geo": {
-          "$ref": "#/definitions/GeoData"
-        },
-        "rewardLevel": {
-          "$ref": "#/definitions/Reward"
-        },
-        "CRM": {
-          "type": "string",
-          "format": "string"
         }
       }
     },
@@ -134,12 +83,12 @@
           "type": "string",
           "format": "string"
         },
-        "scores": {
-          "$ref": "#/definitions/ScoreData"
-        },
         "labels": {
           "type": "string",
           "format": "string"
+        },
+        "scores": {
+          "$ref": "#/definitions/ScoreData"
         }
       }
     }

@@ -12,8 +12,13 @@ service SegSvc {
 }
 
 message GetResponse {
-  string segment = 1;
-  string value = 2;
+  repeated Experiment experiments = 1;
+}
+
+message Experiment {
+  string name = 1;
+  string segment = 2;
+  string value = 3;
 }
 
 message User {
